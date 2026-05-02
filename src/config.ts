@@ -13,6 +13,7 @@ export interface CliOptions {
   maxPages?: number;
   maxLookbackHours?: number;
   timezone?: string;
+  locale?: string;
   stateFile?: string;
   model?: string;
 }
@@ -30,6 +31,7 @@ export interface RuntimeConfig {
   maxLookbackHours: number;
   enableFavourites: boolean;
   timezone: string;
+  locale?: string;
   stateFile: string;
   interestProfilePath?: string;
   outputPath?: string;
@@ -148,6 +150,14 @@ export function parseCliArgs(argv: string[]): CliOptions {
         options.timezone = value;
         break;
       }
+      case '--locale': {
+        const value = consumeValue();
+        if (!value) {
+          throw new Error('Missing value for --locale');
+        }
+        options.locale = value;
+        break;
+      }
       case '--state-file': {
         const value = consumeValue();
         if (!value) {
@@ -178,13 +188,12 @@ export function parseCliArgs(argv: string[]): CliOptions {
 export function resolveRuntimeConfig(options: CliOptions): RuntimeConfig {
   const env = process.env;
 
-  const resolvedInstanceUrl = options.instanceUrl?.trim()
-    || env.MASTODON_BASE_URL?.trim()
-    || 'https://tech.lgbt';
+  const resolvedInstanceUrl = options.instanceUrl?.trim() || env.MASTODON_BASE_URL?.trim() || '';
   const resolvedTimeZone = options.timezone?.trim()
     || env.CURATOR_TIMEZONE?.trim()
     || env.TZ?.trim()
     || 'Europe/Berlin';
+  const resolvedLocale = options.locale?.trim() || env.CURATOR_LOCALE?.trim() || undefined;
   const resolvedStateFile = options.stateFile?.trim() || env.CURATOR_STATE_FILE?.trim() || 'data/state.json';
   const resolvedModel = options.model?.trim() || env.CURATOR_MODEL?.trim() || 'deepseek/deepseek-v3.2';
 
@@ -238,6 +247,7 @@ export function resolveRuntimeConfig(options: CliOptions): RuntimeConfig {
     maxLookbackHours: resolvedMaxLookbackHours,
     enableFavourites: resolvedEnableFavourites,
     timezone: resolvedTimeZone,
+    locale: resolvedLocale,
     stateFile: resolvedStateFile,
     interestProfilePath: options.configPath,
     outputPath: options.outputPath,
@@ -257,15 +267,17 @@ Options:
   -o, --output <path>         Write output to a file.
   --dry-run                   Run without favouriting selected posts.
   --json                      Print machine-readable JSON instead of plain markdown.
-  --instance-url <url>         Mastodon instance base URL.
+  --instance-url <url>         Mastodon instance base URL (same as MASTODON_BASE_URL).
   --target-count <n>          Number of posts to select (1-20).
   --max-post-age-hours <n>    Drop posts older than n hours before pre-filter.
   --max-favourites <n>        Skip already too-liked posts >= n.
   --max-pages <n>             Fetch at most n public timeline pages.
   --max-lookback-hours <n>    Stop once posts are older than n hours.
   --timezone <tz>             IANA timezone for output.
+  --locale <locale>           BCP 47 locale for date/time output, e.g. en-US or de-DE.
   --state-file <path>         Dedup state file path.
   --model <id>                OpenRouter model id.
+  --curator-model <id>        Alias for --model.
 `;
 }
 

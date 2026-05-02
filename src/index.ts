@@ -1,14 +1,9 @@
+#!/usr/bin/env node
 import 'dotenv/config';
 import { writeFileSync } from 'node:fs';
 import { parseCliArgs, resolveRuntimeConfig, usageText } from './config.js';
 import { loadInterestProfile } from './scoring.js';
 import { runCurator } from './curator.js';
-
-function printError(message: string): never {
-  console.error(`[mastodon-curator] ${message}`);
-  process.exitCode = 1;
-  throw new Error(message);
-}
 
 async function main(): Promise<void> {
   const options = parseCliArgs(process.argv.slice(2));
@@ -19,11 +14,14 @@ async function main(): Promise<void> {
   }
 
   const config = resolveRuntimeConfig(options);
+  if (!config.instanceUrl.trim()) {
+    throw new Error('MASTODON_BASE_URL is not set. Set it in .env or pass --instance-url.');
+  }
   if (!config.mastodonAccessToken.trim()) {
-    printError('MASTODON_ACCESS_TOKEN is not set.');
+    throw new Error('MASTODON_ACCESS_TOKEN is not set.');
   }
   if (!config.openRouterApiKey.trim()) {
-    printError('OPENROUTER_API_KEY is not set.');
+    throw new Error('OPENROUTER_API_KEY is not set.');
   }
 
   const profile = loadInterestProfile(config.interestProfilePath);
@@ -38,6 +36,7 @@ async function main(): Promise<void> {
     maxLookbackHours: config.maxLookbackHours,
     enableFavourites: config.enableFavourites,
     timezone: config.timezone,
+    locale: config.locale,
     stateFile: config.stateFile,
     model: config.model,
     profile: profile.profile,
@@ -65,6 +64,7 @@ async function main(): Promise<void> {
       maxPages: config.maxPages,
       maxLookbackHours: config.maxLookbackHours,
       timezone: config.timezone,
+      locale: config.locale,
       profileSource: profile.source,
     },
   };

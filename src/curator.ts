@@ -47,6 +47,7 @@ interface CuratorConfig {
   maxLookbackHours: number;
   enableFavourites: boolean;
   timezone: string;
+  locale?: string;
   stateFile: string;
   model: string;
   profile: InterestProfile;
@@ -169,7 +170,7 @@ export async function runCurator(config: CuratorConfig): Promise<CuratorRunOutpu
       '',
       `Keine passenden Posts auf ${config.instanceUrl} gefunden.`,
       '',
-      `Geprueft am ${formatNowInTimezone(now, timezone)}.`,
+      `Geprueft am ${formatNowInTimezone(now, timezone, config.locale)}.`,
       `Fenster: bis ${config.maxPostAgeHours}h alt, max. ${config.maxFavourites} Favoriten.`,
       `Seiten: ${pageCount}, Statuses: ${fetchedStatuses}, herausgefiltert: ${filteredOut}.`,
       formatHardFilterSummary(hardFilterStats),
@@ -288,6 +289,7 @@ export async function runCurator(config: CuratorConfig): Promise<CuratorRunOutpu
     filteredOut,
     rankedCandidates: candidatesForRanking.length,
     lookbackHours: config.maxLookbackHours,
+    locale: config.locale,
     hardFilterStats,
     ruleRejected,
   });
@@ -381,11 +383,11 @@ function buildRankingPrompt(
   }));
 
   return [
-    `Alexandras Interessenprofil:\n${profile.interestProfile}`,
+    `Interessenprofil:\n${profile.interestProfile}`,
     '',
     `Explizit erwuenschte Topics: ${profile.allowTopics.join(', ') || '(keine)'}`,
     `Explizit zu vermeiden: ${profile.blockTopics.join(', ') || '(keine)'}`,
-    `Aktuelle lokale Zeit: ${formatNowInTimezone(now, timezone)}`,
+    `Aktuelle lokale Zeit: ${formatNowInTimezone(now, timezone, config.locale)}`,
     `Quelle: ${config.instanceUrl.replace(/\/+$/, '')}/public`,
     '',
     'Bewerte diese Mastodon-Posts. Die Posts koennen auf Deutsch oder Englisch sein; bewerte semantisch, nicht nach Sprache.',
@@ -535,6 +537,7 @@ function truncate(text: string, maxLength: number): string {
 function renderDigest(input: {
   now: Date;
   timezone: string;
+  locale?: string;
   instanceUrl: string;
   selected: Array<{ candidate: CuratorCandidate; decision: RankingDecision }>;
   warnings: string[];
@@ -551,7 +554,7 @@ function renderDigest(input: {
     `# Mastodon Digest ${formatDateInTimezone(input.now, input.timezone)}`,
     '',
     `Quelle: ${input.instanceUrl.replace(/\/+$/, '')}/public`,
-    `Ausgefuehrt: ${formatNowInTimezone(input.now, input.timezone)}`,
+    `Ausgefuehrt: ${formatNowInTimezone(input.now, input.timezone, input.locale)}`,
     `Auswahl: ${input.selected.length} Post(s) aus ${input.rankedCandidates} gerankten Kandidaten`,
     `Suchraum: ${input.pagesFetched} Seiten, ${input.fetchedStatuses} Statuses, ${input.lookbackHours}h Lookback`,
     '',

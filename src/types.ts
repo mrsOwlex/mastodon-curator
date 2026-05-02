@@ -1,17 +1,4 @@
-export interface AgentTask {
-  id?: string;
-  agentName?: string;
-  config: Record<string, unknown>;
-  model_override?: string;
-}
-
-export interface AgentOutputConfig {
-  type: 'markdown' | 'json' | 'file';
-  enabled: boolean;
-  path?: string;
-}
-
-export interface RunMetadata {
+interface RunMetadata {
   [key: string]: unknown;
 }
 

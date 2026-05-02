@@ -16,8 +16,8 @@ export function formatDateInTimezone(date: Date, timezone: string): string {
   return `${parts.year}-${String(parts.month).padStart(2, '0')}-${String(parts.day).padStart(2, '0')}`;
 }
 
-export function formatNowInTimezone(date: Date, timezone: string): string {
-  return new Intl.DateTimeFormat('de-DE', {
+export function formatNowInTimezone(date: Date, timezone: string, locale?: string): string {
+  return new Intl.DateTimeFormat(locale, {
     timeZone: timezone,
     dateStyle: 'full',
     timeStyle: 'short',

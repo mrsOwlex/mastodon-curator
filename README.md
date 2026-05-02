@@ -1,6 +1,6 @@
 # Mastodon Curator CLI
 
-> Kannst du bitte auch den Mastodon-Kurator als eigenständiges Script bereitstellen?
+> "Could you also publish the Mastodon curator as a standalone script?"
 
 This repository packages the Mastodon Curator Agent as a standalone, publishable CLI.
 
@@ -43,7 +43,7 @@ OPENROUTER_API_KEY=sk-or-...
 Optional values:
 
 ```ini
-MASTODON_USER_AGENT=mastodon-curator/1.0 (+https://tech.lgbt)
+MASTODON_USER_AGENT=mastodon-curator/1.0
 CURATOR_MODEL=deepseek/deepseek-v3.2
 CURATOR_TARGET_COUNT=10
 CURATOR_MAX_POST_AGE_HOURS=8
@@ -52,8 +52,11 @@ CURATOR_MAX_PAGES=25
 CURATOR_MAX_LOOKBACK_HOURS=168
 CURATOR_ENABLE_FAVOURITES=false
 CURATOR_TIMEZONE=Europe/Berlin
+CURATOR_LOCALE=en-US
 CURATOR_STATE_FILE=data/state.json
 ```
+
+`CURATOR_STATE_FILE` is relative to the current working directory unless you pass an absolute path. For cron or global installs, prefer an explicit path such as `~/.cache/mastodon-curator/state.json`.
 
 ## How to get credentials
 
@@ -85,6 +88,48 @@ Customize with your own profile:
 npx mastodon-curator --config ./my-interests.yaml
 ```
 
+Minimal profile example:
+
+```yaml
+interestProfile: |
+  I am interested in practical software engineering, open source,
+  thoughtful AI tooling, Fediverse culture, and personal technical writing.
+
+topics:
+  - topic: software-engineering
+    score: 4
+    patterns:
+      - '\\b(typescript|javascript|software engineering|developer experience|testing|refactor)\\b'
+  - topic: ai-tools
+    score: 5
+    patterns:
+      - '\\b(ai|llm|agents|openrouter|prompting|rag)\\b'
+
+negativeRules:
+  - label: crypto-web3
+    penalty: -9
+    patterns:
+      - '\\b(crypto|web3|nft|airdrop)\\b'
+
+signalPatterns:
+  opinion:
+    - '\\b(i think|my take|in my experience)\\b'
+  community:
+    - '\\b(community|discussion|reflection)\\b'
+  techContext:
+    - '\\b(code|software|developer|api|open source)\\b'
+  workLife:
+    - '\\b(burnout|work-life|boundaries)\\b'
+  personal:
+    - '\\b(i|my|personally)\\b'
+  criticalReflection:
+    - '\\b(critique|tradeoff|nuanced|skeptical)\\b'
+  discussion:
+    - '\\b(what do you think|curious how others)\\b'
+```
+
+Some signal labels are used by the fallback ranking guard: `opinion`, `community`, `critical-reflection`, `work-life`, `discussion`, `personal-voice`, `tech-context`, and `strong-context-fit`. The bundled negative labels `crypto-web3`, `generic-motivation`, `recruiting-spam`, and `aggregated-news` also get special fallback treatment. Keep those labels if you want the fallback behavior to match the default profile.
+
 ## CLI usage
 
 ```bash
@@ -104,8 +149,10 @@ npx mastodon-curator [options]
 --max-pages <n>             Fetch at most n public timeline pages.
 --max-lookback-hours <n>    Stop scanning once posts are older than n hours.
 --timezone <tz>             IANA timezone for output.
+--locale <locale>           BCP 47 locale for date/time output, e.g. en-US.
 --state-file <path>         Dedup state file path.
 --model <id>                OpenRouter model id.
+--curator-model <id>        Alias for --model.
 ```
 
 ### JSON output
@@ -133,7 +180,7 @@ Emits:
 No scheduler is bundled. Run manually or from cron.
 
 ```cron
-0 8 * * * cd /path/to/mastodon-curator && node dist/index.js --json --dry-run
+0 8 * * * cd /path/to/mastodon-curator && node dist/index.js --json --state-file ~/.cache/mastodon-curator/state.json
 ```
 
 ## Respect opt-out tags

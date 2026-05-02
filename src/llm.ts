@@ -6,6 +6,9 @@ const openrouter = createOpenRouter({
   apiKey: process.env.OPENROUTER_API_KEY ?? '',
 });
 
+type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
+type ProviderOptions = Record<string, Record<string, JsonValue>>;
+
 export interface LlmUsage {
   promptTokens: number;
   completionTokens: number;
@@ -23,7 +26,7 @@ export async function generate(opts: {
   prompt: string;
   maxTokens?: number;
   temperature?: number;
-  providerOptions?: Record<string, Record<string, unknown>>;
+  providerOptions?: ProviderOptions;
 }): Promise<LlmResult> {
   const model = getModel(opts.model);
   const result = await generateText({
@@ -32,7 +35,7 @@ export async function generate(opts: {
     prompt: opts.prompt,
     maxTokens: opts.maxTokens,
     temperature: opts.temperature,
-    providerOptions: opts.providerOptions as Record<string, Record<string, unknown>> | undefined,
+    providerOptions: opts.providerOptions,
   });
 
   return {

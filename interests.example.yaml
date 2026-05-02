@@ -1,0 +1,127 @@
+interestProfile: |
+  Core:
+  - AI/KI: Nutzung, Kritik, Ethik, Tools
+  - Leadership/Management: ehrlich, praktisch, besonders Junior-/Azubi-Kontext
+  - Software Engineering: TypeScript, Tooling, Developer Experience
+  - Trans/LGBTQ+: Community, HRT, Sichtbarkeit
+  - ADHD: Alltag, Coping, Ehrlichkeit
+
+  Sprachen:
+  - Deutsch und Englisch sind gleichwertig willkommen
+  - Auch gemischte Posts oder Denglisch sind okay, wenn der Inhalt passt
+
+  Starkes Interesse:
+  - Open Source, Indie Web, Fediverse-Kultur
+  - Entrepreneurship, Solo-Founder, Side Projects
+  - Go / Baduk / Weiqi
+  - Kochen, besonders asiatisch/koreanisch
+
+  Nische aber relevant:
+  - Neurodivergenz und Work-Life
+  - Automation / Workflow-Tooling
+  - Leipzig / lokale Tech-Community
+
+  Nicht interessant:
+  - Reine Tech-News ohne persoenliche Perspektive
+  - Crypto / Web3
+  - Generische Motivationsposts
+
+topics:
+  - topic: ai
+    score: 5
+    patterns:
+      - '\b(ai|ki|llm|gpt|claude|openai|anthropic|prompt engineering|machine learning|deep learning|artificial intelligence|kuenstliche intelligenz|künstliche intelligenz)\b'
+      - '\b(agentic|agents|mcp|rag|embeddings|prompting)\b'
+  - topic: automation
+    score: 5
+    patterns:
+      - '\b(automation|automatisierung|workflow|workflows|zapier|n8n|make\.com|integromat|orchestration|prozessautomation|arbeitsablauf|prozessfluss|automatisiere|automating)\b'
+      - '\b(productivity system|workflow tooling|ops automation|automationsfluss|toolchain|pipeline|scriptable|skriptbar)\b'
+  - topic: software-engineering
+    score: 4
+    patterns:
+      - '\b(typescript|javascript|node\.?js|developer experience|dx|tooling|linting|testing|refactor|api design|software engineering|softwareentwicklung|entwicklererfahrung|wartbarkeit|maintainability)\b'
+      - '\b(compiler|bundler|frontend|backend|release engineering|entwickler:innen|entwickler|deploy|deployment|devops|codebase|entwicklungsprozess)\b'
+  - topic: leadership
+    score: 4
+    patterns:
+      - '\b(leadership|management|manager|mentoring|mentorship|junior developers|apprentice|azubi|career ladder|fuehrung|führung|teamleitung|nachwuchs|ausbildung)\b'
+      - '\b(team lead|people management|onboarding|feedback culture|fuehrungskraft|führungskraft|mitarbeitergespraech|mitarbeitergespräch|people lead)\b'
+  - topic: lgbtq
+    score: 5
+    patterns:
+      - '\b(trans|transness|hrt|gender affirming|queer|lgbt|lgbtq|nonbinary|visibility|pride|sichtbarkeit)\b'
+      - '\b(chosen family|community care|coming out|transition|transfeindlichkeit|queerfeindlichkeit)\b'
+  - topic: adhd-neurodivergence
+    score: 5
+    patterns:
+      - '\b(adhd|audhd|neurodivergent|neurodivergence|executive dysfunction|sensory overload|masking|adhs|neurodivergenz|prokrastination|dopamin)\b'
+      - '\b(coping strategy|coping strategies|brain fog|reizueberflutung|reizüberflutung|ueberforderung|überforderung|task paralysis)\b'
+  - topic: fediverse-open-source
+    score: 4
+    patterns:
+      - '\b(fediverse|mastodon|activitypub|open source|foss|indie web|self-hosted|self hosted|selbstgehostet|selbst gehostet)\b'
+      - '\b(community moderation|federation|foederation|föderation|moderation)\b'
+  - topic: entrepreneurship
+    score: 3
+    patterns:
+      - '\b(solo founder|indie hacker|bootstrapped|bootstrapping|side project|micro-saas|micro saas|entrepreneurship|selbststaendig|selbständig|nebenerwerb)\b'
+      - '\b(founder journey|sustainable business|gruendung|gründung|kleines produkt)\b'
+  - topic: go-baduk
+    score: 3
+    patterns:
+      - '\b(baduk|weiqi|\bgo board\b|\bgo club\b)\b'
+  - topic: cooking
+    score: 2
+    patterns:
+      - '\b(korean cooking|asian cooking|kimchi|gochujang|ramen|dumplings|home cooking|recipe experiment)\b'
+  - topic: leipzig-tech
+    score: 3
+    patterns:
+      - '\b(leipzig|saxony|sachsen)\b'
+      - '\b(meetup|hackspace|ccc|tech community)\b'
+
+negativeRules:
+  - label: crypto-web3
+    penalty: -9
+    patterns:
+      - '\b(crypto|web3|nft|airdrop|token launch|blockchain|maxi)\b'
+  - label: generic-motivation
+    penalty: -7
+    patterns:
+      - '\b(grindset|rise and grind|just keep going|you got this|never give up|motivation monday|hustle harder)\b'
+      - '\b(success mindset|abundance mindset)\b'
+  - label: recruiting-spam
+    penalty: -6
+    patterns:
+      - '\b(hiring now|we are hiring|dm me for opportunities|drop your resume|job opening)\b'
+      - '\b(recruiter|talent pipeline)\b'
+  - label: aggregated-news
+    penalty: -8
+    patterns:
+      - '\b(daily briefing|breaking news|latest science news|posted into|top stories|news roundup)\b'
+      - '\b(via flipboard|newsletter issue|headline roundup)\b'
+
+signalPatterns:
+  opinion:
+    - '\b(i think|i feel|i learned|i keep noticing|my take|in my experience|for me|i wish|lived experience|my experience|ich denke|ich finde|ich habe gelernt|meiner erfahrung nach|aus eigener erfahrung|fuer mich|für mich)\b'
+    - '\b(we need to|i am tired of|i am glad|i am worried|wir muessen|wir müssen|ich bin muede von|ich bin müde von|ich freue mich|ich mache mir sorgen)\b'
+  community:
+    - '\b(community|mutual aid|care work|peer support|belonging|solidarity|collective|gemeinschaft|solidaritaet|solidarität)\b'
+    - '\b(conversation|discussion|reflection|experience report|austausch|diskussion|reflexion|erfahrungsbericht|nachdenken|debate)\b'
+  techContext:
+    - '\b(code|coding|software|developer|engineering|maintainer|pull request|api|platform|product|tool|tooling|repo|architektur|architecture)\b'
+    - '\b(team|manager|startup|founder|shipping|deployed|open source|self-hosted|self hosted|release|betrieb)\b'
+  workLife:
+    - '\b(burnout|burned out|rest|balance|work life|work-life|fatigue|overwhelm|cope|coping|arbeitsalltag|ueberforderung|überforderung)\b'
+    - '\b(accessibility|accommodations|psychological safety|boundaries|barrierefreiheit|grenzen setzen)\b'
+  personal:
+    - '\b(i|ich)\b'
+    - '\b(my|mein|meine|meiner|meinem)\b'
+    - '\b(personally|for me|for us|our experience|in practice|lately|recently|persoenlich|persönlich|in der praxis|kuerzlich|kürzlich|wir haben|wir lernen|we built|we learned)\b'
+  criticalReflection:
+    - '\b(why are we|what if we|i am skeptical|i''m skeptical|this keeps happening|i don''t buy|i dont buy|warum tun wir|ich bin skeptisch|das passiert staendig|das passiert ständig)\b'
+    - '\b(critique|criticism|frustrating|frustration|messy|komplex|nuanced|tradeoff|trade-off|kritik|frustrierend|kompliziert|nuanciert|abwaegung|abwägung)\b'
+  discussion:
+    - '\b(anyone else|curious how others|what do you all think|would love to hear|who else has seen)\b'
+    - '\b(wie seht ihr das|kennt das noch wer|was denkt ihr|wer hat aehnliche erfahrungen|wer hat ähnliche erfahrungen)\b'
